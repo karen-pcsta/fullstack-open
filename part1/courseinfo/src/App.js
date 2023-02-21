@@ -6,8 +6,8 @@ const Content = (courseParts) => {
   return (
     <div>
       <Part course={courseParts.part[0].name} exercise={courseParts.part[0].exercises} />
-      <Part course={courseParts.part[0].name} exercise={courseParts.part[0].exercises} />
-      <Part course={courseParts.part[0].name} exercise={courseParts.part[0].exercises} />
+      <Part course={courseParts.part[1].name} exercise={courseParts.part[1].exercises} />
+      <Part course={courseParts.part[2].name} exercise={courseParts.part[2].exercises} />
     </div>
   );
 };
