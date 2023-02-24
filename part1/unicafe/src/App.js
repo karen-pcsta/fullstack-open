@@ -12,24 +12,62 @@ const StatisticsHeader = (title) => {
   return <h2>Statistics</h2>;
 };
 
-const CollectedFeedback = ({ feedback, text }) => {
-  return (
-    <p>
-      {text}: {feedback}
-    </p>
-  );
+const Statistics = ({ value, text }) => {
+  const total = value.reduce((sum, a) => sum + a);
+  const average = ((value[0] + value[2]) / total).toFixed(5);
+  const positive = (value[0] / total).toFixed(5);
+  if (total) {
+    return (
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={value[0]} text={text[0]} />{" "}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={value[1]} text={text[1]} />{" "}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={value[2]} text={text[2]} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={total} text={"All"} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={average} text={"Average"} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {" "}
+              <StatisticsLine value={`${positive} %`} text={"Positive"} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+  }
+  return <p>No feedback given</p>;
 };
 
-const Statistics = (value) => {
-  const total = value.value.reduce((sum, a) => sum + a);
-  const average = ((value.value[0] + value.value[2]) / total).toFixed(5);
-  const positive = (value.value[0] / total).toFixed(5);
+const StatisticsLine = ({ value, text }) => {
   return (
-    <>
-      <p>All: {total}</p>
-      <p>Average: {average}</p>
-      <p>Positive: {positive}</p>
-    </>
+    <p>
+      {text} : {value}
+    </p>
   );
 };
 
@@ -58,10 +96,7 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text="Neutral" />
       <Button handleClick={handleBadClick} text="Bad" />
       <StatisticsHeader />
-      <CollectedFeedback feedback={good} text="Good" />
-      <CollectedFeedback feedback={neutral} text="Neutral" />
-      <CollectedFeedback feedback={bad} text="Bad" />
-      <Statistics value={[good, neutral, bad]} />
+      <Statistics value={[good, neutral, bad]} text={["Good", "Neutral", "Bad"]} />
     </div>
   );
 };
