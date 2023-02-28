@@ -1,15 +1,13 @@
-const Header = (title) => {
-  return <h1>{title.course}</h1>;
+const Header = ({ title }) => {
+  return <h1>{title}</h1>;
 };
 
-const Content = (courseParts) => {
-  return (
-    <div>
-      <Part course={courseParts.part[0].name} exercise={courseParts.part[0].exercises} />
-      <Part course={courseParts.part[1].name} exercise={courseParts.part[1].exercises} />
-      <Part course={courseParts.part[2].name} exercise={courseParts.part[2].exercises} />
-    </div>
-  );
+const Content = ({ courseParts }) => {
+  let getPartComponents = courseParts.map((course) => (
+    <Part key={course.id} course={course.name} exercise={course.exercises} />
+  ));
+
+  return <div>{getPartComponents}</div>;
 };
 
 const Part = (partInfo) => {
@@ -20,44 +18,45 @@ const Part = (partInfo) => {
   );
 };
 
-const Total = (numberExercises) => {
-  console.log(numberExercises);
+const Total = ({ numberExercises }) => {
+  const sumOfExercises = numberExercises.reduce((total, part) => total + part.exercises, 0);
+  return <h3>Total of {sumOfExercises} exercises</h3>;
+};
+
+const Course = ({ course }) => {
   return (
-    <p>
-      Number of exercises{" "}
-      {numberExercises.exerciseCount[0].exercises +
-        numberExercises.exerciseCount[1].exercises +
-        numberExercises.exerciseCount[2].exercises}
-    </p>
+    <>
+      <Header title={course.name} />
+      <Content courseParts={course.parts} />
+      <Total numberExercises={course.parts} />
+    </>
   );
 };
 
 const App = () => {
   const course = {
+    id: 1,
     name: "Half Stack application development",
     parts: [
       {
         name: "Fundamentals of React",
         exercises: 10,
+        id: 1,
       },
       {
         name: "Using props to pass data",
         exercises: 7,
+        id: 2,
       },
       {
         name: "State of a component",
         exercises: 14,
+        id: 3,
       },
     ],
   };
 
-  return (
-    <div>
-      <Header course={course.name} />
-      <Content part={course.parts} />
-      <Total exerciseCount={course.parts} />
-    </div>
-  );
+  return <Course course={course} />;
 };
 
 export default App;
