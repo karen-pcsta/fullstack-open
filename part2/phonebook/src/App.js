@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Filter } from "./Components/Filter";
 import { PersonForm } from "./Components/PersonForm";
 import { Person } from "./Components/Person";
+import contactService from "./Services/contacts";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    contactService.getAll().then((response) => {
       setPersons(response.data);
     });
   }, []);
@@ -46,12 +46,24 @@ const App = () => {
     };
     const hasName = persons.some((person) => person.name === nameObj.name);
     if (!hasName) {
-      setPersons(persons.concat(nameObj));
+      contactService.create(nameObj).then((response) => {
+        // console.log(response.data);
+        setPersons(persons.concat(response.data));
+      });
     } else {
       alert(`${newName} is already added to phonebook.`);
     }
     setNewName("");
     setNewNumber("");
+  }
+
+  function deleteContact(id) {
+    const currentObj = persons.find((person) => person.id === id);
+    const changedContactList = persons.filter((person) => person.id !== currentObj.id);
+    if (window.confirm(`Delete ${currentObj.name}?`)) {
+      contactService.remove(id);
+      setPersons(changedContactList);
+    }
   }
 
   return (
@@ -67,8 +79,12 @@ const App = () => {
       />
       <h3>Numbers</h3>
       {!filteredList
-        ? persons.map((person) => <Person key={person.name} personInfo={person} />)
-        : filteredList.map((person) => <Person key={person.name} personInfo={person} />)}
+        ? persons.map((person) => (
+            <Person key={person.name} personInfo={person} eventHandler={deleteContact} />
+          ))
+        : filteredList.map((person) => (
+            <Person key={person.name} personInfo={person} eventHandler={deleteContact} />
+          ))}
     </div>
   );
 };
