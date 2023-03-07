@@ -38,20 +38,33 @@ const App = () => {
     setFilteredList(searchResults);
   }
 
+  function updatePhoneNumber(phoneNumber) {
+    const currentContact = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
+    const changedPhoneNumber = { ...currentContact, number: phoneNumber };
+    contactService.update(currentContact.id, changedPhoneNumber).then((response) => {
+      // console.log(response);
+      setPersons(persons.map((person) => (person.id !== currentContact.id ? person : response.data)));
+    });
+  }
+
   function addNewContact(e) {
     e.preventDefault();
     const nameObj = {
       name: newName,
       number: newNumber,
     };
-    const hasName = persons.some((person) => person.name === nameObj.name);
+    const hasName = persons.some((person) => person.name.toLowerCase() === nameObj.name.toLowerCase());
     if (!hasName) {
       contactService.create(nameObj).then((response) => {
         // console.log(response.data);
         setPersons(persons.concat(response.data));
       });
     } else {
-      alert(`${newName} is already added to phonebook.`);
+      if (
+        window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      ) {
+        updatePhoneNumber(newNumber);
+      }
     }
     setNewName("");
     setNewNumber("");
