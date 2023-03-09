@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Filter } from "./Components/Filter";
 import { PersonForm } from "./Components/PersonForm";
 import { Person } from "./Components/Person";
+import { Notification } from "./Components/Notification";
 import contactService from "./Services/contacts";
 
 const App = () => {
@@ -17,6 +18,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [newSearch, setNewSearch] = useState("");
   const [filteredList, setFilteredList] = useState("");
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [isOk, setOkStatus] = useState("");
 
   function handleNameChange(e) {
     setNewName(e.target.value);
@@ -42,7 +45,6 @@ const App = () => {
     const currentContact = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
     const changedPhoneNumber = { ...currentContact, number: phoneNumber };
     contactService.update(currentContact.id, changedPhoneNumber).then((response) => {
-      // console.log(response);
       setPersons(persons.map((person) => (person.id !== currentContact.id ? person : response.data)));
     });
   }
@@ -56,13 +58,22 @@ const App = () => {
     const hasName = persons.some((person) => person.name.toLowerCase() === nameObj.name.toLowerCase());
     if (!hasName) {
       contactService.create(nameObj).then((response) => {
-        // console.log(response.data);
+        setOkStatus((prevStatus) => (prevStatus = true));
+        setStatusMessage(`Added ${newName}.`);
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 5000);
         setPersons(persons.concat(response.data));
       });
     } else {
       if (
         window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       ) {
+        setOkStatus((prevStatus) => (prevStatus = true));
+        setStatusMessage(`Updated ${newName}'s phone number.`);
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 5000);
         updatePhoneNumber(newNumber);
       }
     }
@@ -74,7 +85,13 @@ const App = () => {
     const currentObj = persons.find((person) => person.id === id);
     const changedContactList = persons.filter((person) => person.id !== currentObj.id);
     if (window.confirm(`Delete ${currentObj.name}?`)) {
-      contactService.remove(id);
+      contactService.remove(id).catch((error) => {
+        setOkStatus((prevStatus) => (prevStatus = false));
+        setStatusMessage(`${currentObj.name} was already removed from server. `);
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 5000);
+      });
       setPersons(changedContactList);
     }
   }
@@ -82,6 +99,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={statusMessage} status={isOk} />
       <Filter value={newSearch} onChange={handleSearchChange} />
 
       <h3>Add a New</h3>
