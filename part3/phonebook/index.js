@@ -53,6 +53,21 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
+function generateNewId() {
+  const newId = contacts.length > 0 ? Math.floor(Math.random() * 50) + 1 : 0;
+
+  return newId;
+}
+
+app.post("/api/persons", (req, res) => {
+  const newContact = req.body;
+  newContact.id = generateNewId();
+  console.log(newContact);
+  contacts = contacts.concat(newContact);
+
+  res.json(newContact);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
