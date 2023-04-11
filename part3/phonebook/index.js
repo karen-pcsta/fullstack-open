@@ -60,11 +60,22 @@ function generateNewId() {
 }
 
 app.post("/api/persons", (req, res) => {
-  const newContact = req.body;
-  newContact.id = generateNewId();
-  console.log(newContact);
-  contacts = contacts.concat(newContact);
+  const body = req.body;
+  const hasName = contacts.find((contact) => contact.name.toLowerCase() === body.name.toLowerCase());
 
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: "Name or Number missing" });
+  } else if (hasName) {
+    return res.status(400).json({ error: "Name already exists" });
+  }
+
+  const newContact = {
+    id: generateNewId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  contacts = contacts.concat(newContact);
   res.json(newContact);
 });
 
