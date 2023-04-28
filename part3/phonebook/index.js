@@ -1,7 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 const date = new Date();
+const Contact = require("./models/contact");
 
 app.use(express.json());
 app.use(express.static("build"));
@@ -11,31 +14,15 @@ morgan.token("content", (req, res) => {
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content"));
 
-let contacts = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+const url = process.env.MONGODB_URI;
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url);
 
 app.get("/api/persons", (req, res) => {
-  res.json(contacts);
+  Contact.find({}).then((contacts) => {
+    res.json(contacts);
+  });
 });
 
 app.get("/info", (req, res) => {
@@ -45,13 +32,9 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = contacts.find((person) => person.id === id);
-
-  if (!person) {
-    res.status(404).send;
-  }
-  res.json(person);
+  Contact.findById(req.params.id).then((contact) => {
+    res.json(contact);
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -60,30 +43,21 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
-function generateNewId() {
-  const newId = contacts.length > 0 ? Math.floor(Math.random() * 50) + 1 : 0;
-
-  return newId;
-}
-
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  const hasName = contacts.find((contact) => contact.name.toLowerCase() === body.name.toLowerCase());
 
   if (!body.name || !body.number) {
     return res.status(400).json({ error: "Name or Number missing" });
-  } else if (hasName) {
-    return res.status(400).json({ error: "Name already exists" });
   }
 
-  const newContact = {
-    id: generateNewId(),
+  const newContact = new Contact({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  contacts = contacts.concat(newContact);
-  res.json(newContact);
+  newContact.save().then((savedContact) => {
+    res.json(savedContact);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
