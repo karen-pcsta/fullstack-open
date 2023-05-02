@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const mongoose = require("mongoose");
 const date = new Date();
 const Contact = require("./models/contact");
 
@@ -13,11 +12,6 @@ morgan.token("content", (req, res) => {
 });
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content"));
-
-const url = process.env.MONGODB_URI;
-
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
 
 app.get("/api/persons", (req, res) => {
   Contact.find({}).then((contacts) => {
