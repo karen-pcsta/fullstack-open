@@ -13,6 +13,16 @@ morgan.token("content", (req, res) => {
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content"));
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
 app.get("/api/persons", (req, res) => {
   Contact.find({}).then((contacts) => {
     res.json(contacts);
@@ -20,33 +30,41 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(`Phonebook has info for ${contacts.length} people.
-    
-   ${date}`);
-});
-
-app.get("/api/persons/:id", (req, res) => {
-  Contact.findById(req.params.id).then((contact) => {
-    res.json(contact);
+  Contact.find({}).then((contacts) => {
+    res.send(`Phonebook has info for ${contacts.length} people. ${date}`);
   });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  contacts = contacts.filter((person) => person.id !== id);
-  res.status(204).end();
+app.get("/api/persons/:id", (req, res, next) => {
+  Contact.findById(req.params.id)
+    .then((contact) => {
+      if (contact) {
+        res.json(contact);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
+});
+
+app.delete("/api/persons/:id", (req, res, next) => {
+  Contact.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.post("/api/persons", (req, res) => {
-  const body = req.body;
+  const { name, number } = req.body;
 
-  if (!body.name || !body.number) {
+  if (!name || !number) {
     return res.status(400).json({ error: "Name or Number missing" });
   }
 
   const newContact = new Contact({
-    name: body.name,
-    number: body.number,
+    name: name,
+    number: number,
   });
 
   newContact.save().then((savedContact) => {
@@ -54,7 +72,24 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
+app.put("/api/persons/:id", (req, res) => {
+  const { number, id } = req.body;
+
+  const contact = {
+    number: number,
+  };
+
+  Contact.findByIdAndUpdate(id, contact, { new: true })
+    .then((updatedContact) => {
+      console.log("Name already exists");
+      res.json(updatedContact);
+    })
+    .catch((error) => next(error));
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use(errorHandler);
