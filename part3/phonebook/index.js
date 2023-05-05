@@ -14,10 +14,10 @@ morgan.token("content", (req, res) => {
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content"));
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
-
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).send({ error: error.message });
   }
 
   next(error);
@@ -55,7 +55,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
 
   if (!name || !number) {
@@ -67,21 +67,23 @@ app.post("/api/persons", (req, res) => {
     number: number,
   });
 
-  newContact.save().then((savedContact) => {
-    res.json(savedContact);
-  });
+  newContact
+    .save()
+    .then((savedContact) => {
+      res.json(savedContact);
+    })
+    .catch((error) => next(error));
 });
 
-app.put("/api/persons/:id", (req, res) => {
+app.put("/api/persons/:id", (req, res, next) => {
   const { number, id } = req.body;
 
   const contact = {
     number: number,
   };
 
-  Contact.findByIdAndUpdate(id, contact, { new: true })
+  Contact.findByIdAndUpdate(id, contact, { new: true, runValidators: true })
     .then((updatedContact) => {
-      console.log("Name already exists");
       res.json(updatedContact);
     })
     .catch((error) => next(error));
