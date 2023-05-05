@@ -1,5 +1,4 @@
 export const Notification = ({ message, status }) => {
-  console.log(status);
   const messageStyle = {
     color: status ? "green" : "red",
     background: "lightgrey",

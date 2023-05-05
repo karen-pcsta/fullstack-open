@@ -41,12 +41,25 @@ const App = () => {
     setFilteredList(searchResults);
   }
 
+  function hideStatusMessage() {
+    setTimeout(() => {
+      setStatusMessage(null);
+    }, 5000);
+  }
+
   function updatePhoneNumber(phoneNumber) {
     const currentContact = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
     const changedPhoneNumber = { ...currentContact, number: phoneNumber };
-    contactService.update(currentContact.id, changedPhoneNumber).then((response) => {
-      setPersons(persons.map((person) => (person.id !== currentContact.id ? person : response.data)));
-    });
+    contactService
+      .update(currentContact.id, changedPhoneNumber)
+      .then((response) => {
+        setPersons(persons.map((person) => (person.id !== currentContact.id ? person : response.data)));
+      })
+      .catch((error) => {
+        setOkStatus((prevStatus) => (prevStatus = false));
+        setStatusMessage(error.response.data.error);
+        hideStatusMessage();
+      });
   }
 
   function addNewContact(e) {
@@ -57,24 +70,27 @@ const App = () => {
     };
     const hasName = persons.some((person) => person.name.toLowerCase() === nameObj.name.toLowerCase());
     if (!hasName) {
-      contactService.create(nameObj).then((response) => {
-        setOkStatus((prevStatus) => (prevStatus = true));
-        setStatusMessage(`Added ${newName}.`);
-        setTimeout(() => {
-          setStatusMessage(null);
-        }, 5000);
-        setPersons(persons.concat(response.data));
-      });
+      contactService
+        .create(nameObj)
+        .then((response) => {
+          setOkStatus((prevStatus) => (prevStatus = true));
+          setStatusMessage(`Added ${newName}.`);
+          hideStatusMessage();
+          setPersons(persons.concat(response.data));
+        })
+        .catch((err) => {
+          setOkStatus((prevStatus) => (prevStatus = false));
+          setStatusMessage(err.response.data.error);
+          hideStatusMessage();
+        });
     } else {
       if (
         window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       ) {
+        updatePhoneNumber(newNumber);
         setOkStatus((prevStatus) => (prevStatus = true));
         setStatusMessage(`Updated ${newName}'s phone number.`);
-        setTimeout(() => {
-          setStatusMessage(null);
-        }, 5000);
-        updatePhoneNumber(newNumber);
+        hideStatusMessage();
       }
     }
     setNewName("");
