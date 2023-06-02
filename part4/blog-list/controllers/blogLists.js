@@ -1,8 +1,10 @@
 const blogListsRouter = require("express").Router()
 const Blog = require("../models/blogList")
+let exportedList = []
 
 blogListsRouter.get("/", (req, res) => {
   Blog.find({}).then((blogs) => {
+    exportedList = res.json(blogs)
     res.json(blogs)
   })
 })
@@ -14,4 +16,4 @@ blogListsRouter.post("/", (req, res) => {
   })
 })
 
-module.exports = blogListsRouter
+module.exports = { blogListsRouter, exportedList }
