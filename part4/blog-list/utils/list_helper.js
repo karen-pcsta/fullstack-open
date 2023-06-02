@@ -13,7 +13,18 @@ const totalLikes = (blogs) => {
   }
 }
 
+const favoriteBlog = (blogs) => {
+  let highestLikeCount = 0
+  for (let blog of blogs) {
+    if (blog.likes > highestLikeCount) {
+      highestLikeCount = blog.likes
+    }
+  }
+  return blogs.find((blog) => blog.likes === highestLikeCount)
+}
+
 module.exports = {
   dummy,
   totalLikes,
+  favoriteBlog,
 }
