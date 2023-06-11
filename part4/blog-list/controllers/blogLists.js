@@ -5,7 +5,6 @@ let exportedList = []
 blogListsRouter.get("/", (req, res) => {
   Blog.find({}).then((blogs) => {
     exportedList = res.json(blogs)
-    res.json(blogs)
   })
 })
 
