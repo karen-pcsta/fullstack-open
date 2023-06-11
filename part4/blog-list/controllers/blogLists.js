@@ -2,17 +2,15 @@ const blogListsRouter = require("express").Router()
 const Blog = require("../models/blogList")
 let exportedList = []
 
-blogListsRouter.get("/", (req, res) => {
-  Blog.find({}).then((blogs) => {
-    exportedList = res.json(blogs)
-  })
+blogListsRouter.get("/", async (req, res) => {
+  const blogList = await Blog.find({})
+  exportedList = res.json(blogList)
 })
 
-blogListsRouter.post("/", (req, res) => {
+blogListsRouter.post("/", async (req, res) => {
   const blog = new Blog(req.body)
-  blog.save().then((result) => {
-    res.status(201).json(result)
-  })
+  await blog.save()
+  res.status(201).json(blog)
 })
 
 module.exports = { blogListsRouter, exportedList }
