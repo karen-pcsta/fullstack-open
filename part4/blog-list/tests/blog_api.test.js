@@ -44,6 +44,18 @@ test("a new post is created", async () => {
   expect(blogList).toHaveLength(initialBlogList.length + 1)
 })
 
+test("if like property is missing, it will default to the value 0 ", async () => {
+  const newPost = {
+    title: "Type wars",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+  }
+  await api.post("/api/blogs").send(newPost).expect(201)
+  const blogList = await blogListInDb()
+  const lastPost = blogList[blogList.length - 1]
+  expect(lastPost.likes).toBe(0)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
