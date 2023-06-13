@@ -5,7 +5,7 @@ const app = require("../app")
 const api = supertest(app)
 
 const Blog = require("../models/blogList")
-const { initialBlogList, blogListInDb } = require("./test_helper.test")
+const { initialBlogList, blogListInDb, savePost } = require("./test_helper.test")
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -31,6 +31,17 @@ test("id property exists", async () => {
   const response = await blogListInDb()
   // console.log(response)
   expect(response[0].id).toBeDefined()
+})
+
+test("a new post is created", async () => {
+  const newPost = savePost()
+  // console.log(newPost)
+
+  await api.post("/api/blogs").send(newPost).expect(201)
+
+  const blogList = await blogListInDb()
+
+  expect(blogList).toHaveLength(initialBlogList.length + 1)
 })
 
 afterAll(async () => {

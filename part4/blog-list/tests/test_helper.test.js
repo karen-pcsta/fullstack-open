@@ -20,7 +20,19 @@ const blogListInDb = async () => {
   return posts.map((post) => post.toJSON())
 }
 
+const savePost = () => {
+  const newPost = {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12,
+  }
+
+  return newPost
+}
+
 module.exports = {
   initialBlogList,
   blogListInDb,
+  savePost,
 }
