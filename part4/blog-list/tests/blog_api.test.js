@@ -27,6 +27,12 @@ test("entire blog list is returned", async () => {
   expect(response).toHaveLength(initialBlogList.length)
 })
 
+test("id property exists", async () => {
+  const response = await blogListInDb()
+  // console.log(response)
+  expect(response[0].id).toBeDefined()
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
