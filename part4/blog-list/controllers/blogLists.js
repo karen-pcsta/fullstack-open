@@ -9,7 +9,7 @@ blogListsRouter.get("/", async (req, res) => {
   exportedList = res.json(blogList)
 })
 
-blogListsRouter.post("/", async (req, res, next) => {
+blogListsRouter.post("/", async (req, res) => {
   const { body } = req
   let blog = new Blog(body)
   await blog.save()

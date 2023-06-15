@@ -56,7 +56,7 @@ test("if like property is missing, it will default to the value 0 ", async () =>
   expect(lastPost.likes).toBe(0)
 })
 
-test.only("if title or url property is missing, return with bad request ", async () => {
+test("if title or url property is missing, return with bad request ", async () => {
   const post = {
     author: "Robert C. Martin",
     likes: 5,
