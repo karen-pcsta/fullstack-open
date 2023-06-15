@@ -1,5 +1,7 @@
 const blogListsRouter = require("express").Router()
+const req = require("express/lib/request")
 const Blog = require("../models/blogList")
+const { error } = require("../utils/logger")
 let exportedList = []
 
 blogListsRouter.get("/", async (req, res) => {
@@ -7,14 +9,9 @@ blogListsRouter.get("/", async (req, res) => {
   exportedList = res.json(blogList)
 })
 
-blogListsRouter.post("/", async (req, res) => {
-  let blog
-  if (req.body.likes === undefined) {
-    blog = new Blog({ ...req.body, likes: 0 })
-  } else {
-    blog = new Blog(req.body)
-  }
-
+blogListsRouter.post("/", async (req, res, next) => {
+  const { body } = req
+  let blog = new Blog(body)
   await blog.save()
   res.status(201).json(blog)
 })

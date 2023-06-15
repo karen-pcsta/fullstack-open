@@ -56,6 +56,14 @@ test("if like property is missing, it will default to the value 0 ", async () =>
   expect(lastPost.likes).toBe(0)
 })
 
+test.only("if title or url property is missing, return with bad request ", async () => {
+  const post = {
+    author: "Robert C. Martin",
+    likes: 5,
+  }
+  await api.post("/api/blogs").send(post).expect(400)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
