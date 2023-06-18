@@ -22,4 +22,15 @@ blogListsRouter.delete("/:id", async (req, res) => {
   return res.status(204).end()
 })
 
+blogListsRouter.put("/:id", async (req, res) => {
+  const id = req.params.id
+  const { body } = req
+  const updatedBlog = {
+    ...body,
+    likes: body.likes,
+  }
+  await Blog.findByIdAndUpdate(id, updatedBlog, { new: true })
+  res.send(updatedBlog)
+})
+
 module.exports = { blogListsRouter, exportedList }
