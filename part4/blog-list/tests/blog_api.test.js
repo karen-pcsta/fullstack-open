@@ -64,6 +64,12 @@ test("if title or url property is missing, return with bad request ", async () =
   await api.post("/api/blogs").send(post).expect(400)
 })
 
+test("a single blog post is deleted successfully", async () => {
+  const blogList = await blogListInDb()
+  const firstBlogId = blogList[0].id
+  await api.delete(`/api/blogs/${firstBlogId}`).expect(204)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
