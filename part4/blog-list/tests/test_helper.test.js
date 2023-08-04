@@ -1,4 +1,5 @@
 const Blog = require("../models/blogList")
+const User = require("../models/user")
 
 const initialBlogList = [
   {
@@ -20,6 +21,11 @@ const blogListInDb = async () => {
   return posts.map((post) => post.toJSON())
 }
 
+const userListInDb = async () => {
+  const users = await User.find({})
+  return users.map((user) => user.toJSON())
+}
+
 const savePost = () => {
   const newPost = {
     title: "Canonical string reduction",
@@ -35,4 +41,5 @@ module.exports = {
   initialBlogList,
   blogListInDb,
   savePost,
+  userListInDb,
 }
