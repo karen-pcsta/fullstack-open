@@ -81,7 +81,7 @@ describe("User creation fails", () => {
     expect(usersAtStart).toEqual(usersAtEnd)
   })
 
-  test.only("Creation fails because password was not informed", async () => {
+  test("Creation fails because password was not informed", async () => {
     const usersAtStart = await userListInDb()
     const newUser = {
       username: "blabla2023",
