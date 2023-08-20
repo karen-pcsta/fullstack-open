@@ -3,6 +3,7 @@ const req = require("express/lib/request")
 const Blog = require("../models/blogList")
 const { error } = require("../utils/logger")
 const User = require("../models/user")
+const jwt = require("jsonwebtoken")
 
 let exportedList = []
 
