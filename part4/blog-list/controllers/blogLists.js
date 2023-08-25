@@ -7,18 +7,13 @@ const jwt = require("jsonwebtoken")
 
 let exportedList = []
 
-// blogListsRouter.get("/", async (req, res) => {
-//   const blogList = await Blog.find({})
-//   exportedList = res.json(blogList)
-// })
-
-const getTokenFrom = (req) => {
-  const authorization = req.get("authorization")
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return authorization.replace("Bearer ", "")
-  }
-  return null
-}
+// const getTokenFrom = (req) => {
+//   const authorization = req.get("authorization")
+//   if (authorization && authorization.startsWith("Bearer ")) {
+//     return authorization.replace("Bearer ", "")
+//   }
+//   return null
+// }
 
 blogListsRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 })
@@ -26,8 +21,12 @@ blogListsRouter.get("/", async (req, res) => {
 })
 
 blogListsRouter.post("/", async (req, res) => {
-  const { body } = req
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  const { body, token } = req
+
+  if (!token) {
+    return res.status(401).json({ error: "token missing" })
+  }
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
   if (!decodedToken.id) {
     return res.status(401).json({ error: "token invalid" })
   }
