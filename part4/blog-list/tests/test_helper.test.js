@@ -34,7 +34,7 @@ const savePost = () => {
     likes: 12,
   }
 
-  return newPost
+  return { ...newPost, user: 12345 }
 }
 
 module.exports = {

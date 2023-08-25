@@ -43,10 +43,11 @@ blogListsRouter.delete("/:id", async (req, res) => {
     return res.status(404).json({ error: "blog not found" })
   }
 
-  if (blog.user.toString() !== user.id) {
+  if (blog.user.toString() === user.id) {
+    await Blog.findByIdAndRemove(id)
+  } else {
     return res.status(401).json({ error: "Unauthorized" })
   }
-  await Blog.findByIdAndRemove(id)
 
   user.blogs = user.blogs.filter((blog) => blog._id.toString() !== id)
   await user.save()
