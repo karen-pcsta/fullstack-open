@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import LogoutButton  from './components/LogoutButton'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -18,6 +19,15 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedUser = window.localStorage.getItem('loggedInUser')
+    if (loggedUser) {
+      const user = JSON.parse(loggedUser)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -25,10 +35,15 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+      blogService.setToken(user.token)
+      window.localStorage.setItem(
+        'loggedInUser', JSON.stringify(user)
+      ) 
+
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
+    } catch (err) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
@@ -69,10 +84,14 @@ const App = () => {
       </div> :
             <div>
               <h2>blogs</h2>
-                {user && <p>{user.name} logged in</p>}
-                {blogs.map(blog =>
-                  <Blog key={blog.id} blog={blog} />
-                )}
+                {user && <p  style={{display:'inline'}}> {user.name} logged in</p>}
+                {user && <LogoutButton onClick={() => window.localStorage.clear()} setUser={setUser}></LogoutButton>}
+                <div style={{paddingTop:"2em"}}>
+                  {blogs.map(blog =>
+                    <Blog key={blog.id} blog={blog}/>
+                  )}
+                </div>
+                
             </div>
 }
 
