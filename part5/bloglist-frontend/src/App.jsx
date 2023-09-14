@@ -4,10 +4,14 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LogoutButton  from './components/LogoutButton'
 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
 
   const [user, setUser] = useState(null)
@@ -51,6 +55,24 @@ const App = () => {
     }
   }
 
+  const handleNewBlog = (e) => {
+    e.preventDefault()
+
+    const newBlog = {
+      title,
+      author,
+      url
+    }
+    blogService.create(newBlog).then(
+      returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setAuthor("")
+        setTitle("")
+        setUrl("")
+      }
+    )  
+  }
+
   const loginForm = () => (
         <form onSubmit={handleLogin}>
             <div>
@@ -75,27 +97,65 @@ const App = () => {
           </form>   
   )
 
+  const newBlogForm = () => (
+    <form onSubmit={handleNewBlog}>
+      <div>
+        title:
+        <input
+          type='text'
+          value={title}
+          name='title'
+          onChange={({target}) => setTitle(target.value)}
+        />
+      </div>
+      <div>
+        author:
+        <input
+          type='text'
+          value={author}
+          name='author'
+          onChange={({target}) => setAuthor(target.value)}
+        />
+      </div>
+      <div>
+        url:
+        <input
+          type='text'
+          value={url}
+          name='author'
+          onChange={({target}) => setUrl(target.value)}
+        />
+      </div>
+      <button type='submit'>create</button>  
+    </form>
+  )
+
+  
+
  return (
   <div>
-    {user === null ?
+    {!user &&
       <div>
         <h2>log in to application</h2>
         {loginForm()}
-      </div> :
-            <div>
-              <h2>blogs</h2>
-                {user && <p  style={{display:'inline'}}> {user.name} logged in</p>}
-                {user && <LogoutButton onClick={() => window.localStorage.clear()} setUser={setUser}></LogoutButton>}
-                <div style={{paddingTop:"2em"}}>
-                  {blogs.map(blog =>
-                    <Blog key={blog.id} blog={blog}/>
-                  )}
-                </div>
-                
-            </div>
-}
+      </div> 
+    }
 
-   </div>
+    {user && 
+       <div>
+         <h2>blogs</h2>
+         <p  style={{display:'inline'}}> {user.name} logged in</p>
+         <LogoutButton onClick={() => window.localStorage.clear()} setUser={setUser}></LogoutButton>
+         <h2>create new</h2>
+         {newBlogForm()}
+         <div style={{paddingTop:"2em"}}>
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog}/>
+             )}
+          </div>       
+       </div>
+   }
+  </div>
   )
 }
 
