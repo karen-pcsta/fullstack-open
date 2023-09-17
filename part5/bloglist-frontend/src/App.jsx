@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LogoutButton  from './components/LogoutButton'
+import Notification from './components/Notification'
 
 
 const App = () => {
@@ -12,6 +13,9 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [isAdded, setIsAdded] = useState(null)
+  const [notAdded, setNotAdded] = useState(null)
+  const [notLogged, setNotlogged] = useState(null)
 
 
   const [user, setUser] = useState(null)
@@ -32,6 +36,12 @@ const App = () => {
     }
   }, [])
 
+  function hideStatusMessage() {
+    setIsAdded(null);
+    setNotAdded(null)
+    setNotlogged(null);
+}
+
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -49,8 +59,10 @@ const App = () => {
       setPassword('')
     } catch (err) {
       setErrorMessage('Wrong credentials')
+      setNotlogged(true)
       setTimeout(() => {
         setErrorMessage(null)
+        hideStatusMessage()
       }, 5000)
     }
   }
@@ -64,15 +76,27 @@ const App = () => {
       url
     }
     blogService.create(newBlog).then(
-      returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setAuthor("")
-        setTitle("")
-        setUrl("")
-      }
-    )  
-  }
+      (res) => { 
+        setBlogs(blogs.concat(res))
+        setIsAdded(true)
+          setTimeout(() => {
+          setAuthor("")
+          setTitle("")
+          setUrl("")
+          hideStatusMessage()
+          }, 5000)
 
+        }
+    ).catch(err => {
+        setNotAdded(true)
+        setTimeout(() => {
+          hideStatusMessage()
+        },5000) 
+      }
+      )
+    }  
+  
+   
   const loginForm = () => (
         <form onSubmit={handleLogin}>
             <div>
@@ -137,6 +161,9 @@ const App = () => {
     {!user &&
       <div>
         <h2>log in to application</h2>
+        { notLogged &&
+           <Notification notLogged = {notLogged}></Notification> 
+         }
         {loginForm()}
       </div> 
     }
@@ -144,7 +171,10 @@ const App = () => {
     {user && 
        <div>
          <h2>blogs</h2>
-         <p  style={{display:'inline'}}> {user.name} logged in</p>
+         { (isAdded || notAdded) &&
+           <Notification isAdded={isAdded} notAdded={notAdded} title={title} author={author}></Notification> 
+         }
+         <p style={{display:'inline'}}> {user.name} logged in</p>
          <LogoutButton onClick={() => window.localStorage.clear()} setUser={setUser}></LogoutButton>
          <h2>create new</h2>
          {newBlogForm()}
@@ -157,6 +187,6 @@ const App = () => {
    }
   </div>
   )
-}
+  }
 
 export default App
