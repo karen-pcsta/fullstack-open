@@ -46,6 +46,8 @@ const App = () => {
     setNotlogged(null);
 }
 
+
+
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -149,7 +151,7 @@ const App = () => {
         </Togglable>
          <div style={{paddingTop:"5em"}}>
             {blogs.map(blog =>
-              <Blog style={{padding:"2em"}} key={blog.id} blog={blog}/>
+              <Blog key={blog.id} blogId={blog.id} blog={blog} blogList={blogs} setBlogs={setBlogs}/>
              )}
           </div>       
        </div>

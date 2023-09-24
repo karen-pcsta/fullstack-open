@@ -1,7 +1,10 @@
 import { useState } from "react"
+import blogService from "../services/blogs"
 
-const Blog = ({ blog }) => {
 
+const Blog = ({ blogId,blog, blogList, setBlogs}) => {
+
+const {title,url,likes,author} = blog
 const [show, setShow] = useState(false)
 
 const blogStyle = {
@@ -12,20 +15,40 @@ const blogStyle = {
   marginBottom: 5
 }
 
+async function handleLikes(id) {
+ const blogToUpdate = {title,url,likes,author}
+
+ try {
+    const req = await blogService.update(id,{ ...blogToUpdate, likes: likes+1 })
+    const updatedBlogsArr = blogList.map((blog) => {
+      if (blog.id === id) {
+        return { ...blog, likes: req.likes };
+      } else {
+        return blog;
+      }
+    })
+    setBlogs(updatedBlogsArr)
+   
+ } catch (error) {
+     console.log(error)
+ }
+
+}
+
+
 function display() {
   setShow(prevState => !prevState)
 }
 
-
   return (
     <div style={blogStyle}>
-      {blog.title} <button style={{display:"inline"}} onClick={display}>{ !show ? "view" : "hide"}</button>
+      {title} <button style={{display:"inline"}} onClick={display}>{ !show ? "view" : "hide"}</button>
       {show && <div>
-        {blog.url}
+        {url}
         <br></br>
-        {blog.likes} <button style={{display:"inline"}} onClick={() => console.log("hi")}>like</button>
+        {likes} <button style={{display:"inline"}} onClick={() => handleLikes(blogId)}>like</button>
         <br></br>
-        {blog.author}
+        {author}
       </div>}      
     </div>  
   )
