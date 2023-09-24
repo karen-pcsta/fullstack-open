@@ -26,8 +26,10 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('') 
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+      const sortedArr = blogs.sort((a,b) => b.likes - a.likes)
+      setBlogs( sortedArr)
+    }
     )  
   }, [])
 
