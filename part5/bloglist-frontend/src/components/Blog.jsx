@@ -35,6 +35,21 @@ async function handleLikes(id) {
 
 }
 
+async function handleRemoval(id) {
+
+  if(window.confirm(`Remove ${title} by ${author}?`)){
+    try {
+       const req = await blogService.remove(id)
+       const updatedBlogArr = blogList.filter((blog) => blog.id !== id)
+       setBlogs(updatedBlogArr)
+      
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+ }
+
 
 function display() {
   setShow(prevState => !prevState)
@@ -49,6 +64,8 @@ function display() {
         {likes} <button style={{display:"inline"}} onClick={() => handleLikes(blogId)}>like</button>
         <br></br>
         {author}
+        <br></br>
+        <button style={{display:"inline"}} onClick={() => handleRemoval(blogId)}>remove</button>
       </div>}      
     </div>  
   )
