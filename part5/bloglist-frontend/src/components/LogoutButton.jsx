@@ -1,15 +1,15 @@
 
-const LogoutButton =  ({onClick, setUser}) => {
+const LogoutButton =  ({ onClick, setUser }) => {
   function onClickFunction() {
-        onClick(),
-        setUser(null)
-    }
+    onClick(),
+    setUser(null)
+  }
 
-    return (
+  return (
     <>
-       <button style={{marginLeft:5}} onClick={onClickFunction}>logout</button>
+      <button style={{ marginLeft:5 }} onClick={onClickFunction}>logout</button>
     </>
-    )
+  )
 }
 
 

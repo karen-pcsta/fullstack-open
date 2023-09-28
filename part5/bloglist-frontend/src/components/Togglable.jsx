@@ -1,23 +1,23 @@
 
-const Togglable = ({children, display, setDisplay}) => {
+const Togglable = ({ children, display, setDisplay }) => {
 
 
-function toggle () {
+  function toggle () {
     setDisplay(prevDisplay => !prevDisplay)
-}
+  }
 
-    if(!display){
-        return <button onClick={toggle}>New Post</button>
-    } else {
-        return (
+  if(!display){
+    return <button onClick={toggle}>New Post</button>
+  } else {
+    return (
+      <div>
         <div>
-            <div>
-                {children}
-                <button onClick={toggle}>Cancel</button>
-            </div>
+          {children}
+          <button onClick={toggle}>Cancel</button>
         </div>
-        )
-    }
+      </div>
+    )
+  }
 }
 
 
