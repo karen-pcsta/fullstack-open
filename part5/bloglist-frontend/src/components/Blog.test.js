@@ -3,22 +3,39 @@
 import React from "react"
 import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import Blog from "./Blog"
 
-test("renders blog post with title and author only", () => {
-  const newBlog = {
-    title: "Oi",
-    author: "Doki",
-  }
+const newBlog = {
+  title: "Oi",
+  author: "Doki",
+  likes: 5,
+  url: "blabla.com",
+}
 
-  render(<Blog blog={newBlog} />)
+describe("renders ", () => {
+  test("blog post with title and author only", () => {
+    render(<Blog blog={newBlog} />)
 
-  const titleAndAuthor = screen.getByText("Oi - Doki")
-  const url = screen.queryByText("url")
-  const likes = screen.queryByText("likes")
+    const titleAndAuthor = screen.getByText("Oi - Doki")
+    const url = screen.queryByText("url")
+    const likes = screen.queryByText("likes")
 
-  expect(titleAndAuthor).toHaveTextContent("Oi - Doki")
+    expect(titleAndAuthor).toHaveTextContent("Oi - Doki")
 
-  expect(url).toBeNull()
-  expect(likes).toBeNull()
+    expect(url).toBeNull()
+    expect(likes).toBeNull()
+  })
+
+  test("URL and number of likes after the view button has been clicked ", async () => {
+    const { container } = render(<Blog blog={newBlog} />)
+
+    const button = screen.getByText("view")
+    await userEvent.click(button)
+
+    const div = container.querySelector(".togglableContent")
+
+    expect(div).toHaveTextContent("blabla.com")
+    expect(div).toHaveTextContent("5")
+  })
 })

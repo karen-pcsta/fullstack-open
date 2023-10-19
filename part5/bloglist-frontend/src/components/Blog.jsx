@@ -58,7 +58,7 @@ const Blog = ({ blogId,blog, blogList, setBlogs }) => {
   return (
     <div style={blogStyle} className="blog-post">
       {title} - {author} <button style={{ display:"inline" }} onClick={display}>{ !show ? "view" : "hide"}</button>
-      {show && <div>
+      {show && <div className="togglableContent">
         {url}
         <br></br>
         {likes} <button style={{ display:"inline" }} onClick={() => handleLikes(blogId)}>like</button>
