@@ -2,7 +2,7 @@ import { useState } from "react"
 import blogService from "../services/blogs"
 
 
-const Blog = ({ blogId,blog, blogList, setBlogs }) => {
+const Blog = ({ blogId,blog, blogList, updateBlog}) => {
 
   const { title,url,likes,author } = blog
   const [show, setShow] = useState(false)
@@ -15,32 +15,19 @@ const Blog = ({ blogId,blog, blogList, setBlogs }) => {
     marginBottom: 5
   }
 
-  async function handleLikes(id) {
-    const blogToUpdate = { title,url,likes,author }
+  const handleLikes =  () => {
+    const blogToUpdate= { title,url,likes,author }
 
-    try {
-      const req = await blogService.update(id,{ ...blogToUpdate, likes: likes+1 })
-      const updatedBlogsArr = blogList.map((blog) => {
-        if (blog.id === id) {
-          return { ...blog, likes: req.likes }
-        } else {
-          return blog
-        }
-      })
-      setBlogs(updatedBlogsArr)
-
-    } catch (error) {
-      console.log(error)
-    }
+    updateBlog(blogId,blogToUpdate)
 
   }
 
-  async function handleRemoval(id) {
+  const handleRemoval= async () => {
 
     if(window.confirm(`Remove ${title} by ${author}?`)){
       try {
-        const req = await blogService.remove(id)
-        const updatedBlogArr = blogList.filter((blog) => blog.id !== id)
+        const req = await blogService.remove(blogId)
+        const updatedBlogArr = blogList.filter((blog) => blog.id !== blogId)
         setBlogs(updatedBlogArr)
 
       } catch (error) {
@@ -61,9 +48,9 @@ const Blog = ({ blogId,blog, blogList, setBlogs }) => {
       {show && <div className="togglableContent">
         {url}
         <br></br>
-        {likes} <button style={{ display:"inline" }} onClick={() => handleLikes(blogId)}>like</button>
+        {likes} <button style={{ display:"inline" }} onClick={handleLikes}>like</button>
         <br></br>
-        <button style={{ display:"inline" }} onClick={() => handleRemoval(blogId)}>remove</button>
+        <button style={{ display:"inline" }} onClick={handleRemoval}>remove</button>
       </div>}
     </div>
   )

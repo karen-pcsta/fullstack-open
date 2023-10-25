@@ -105,6 +105,22 @@ const App = () => {
     )
   }
 
+  const updateBlog = async (blogId,blogToUpdate) => {
+    try {
+      const req = await blogService.update(blogId,{ ...blogToUpdate, likes: blogToUpdate.likes+1 })
+      const updatedBlogsArr = blogs.map((blog) => {
+        if (blog.id === blogId) {
+          return { ...blog, likes: req.likes }
+        } else {
+          return blog
+        }
+      })
+      setBlogs(updatedBlogsArr)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
 
@@ -153,7 +169,7 @@ const App = () => {
          </Togglable>
          <div style={{ paddingTop:"5em" }}>
            {blogs.map(blog =>
-             <Blog key={blog.id} blogId={blog.id} blog={blog} blogList={blogs} setBlogs={setBlogs}/>
+             <Blog key={blog.id} blogId={blog.id} blog={blog} blogList={blogs} setBlogs={setBlogs} updateBlog={updateBlog}/>
            )}
          </div>
        </div>

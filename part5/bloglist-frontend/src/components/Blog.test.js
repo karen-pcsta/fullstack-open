@@ -1,5 +1,3 @@
-//Make a test, which checks that the component displaying a blog renders the blog's title and author, but does not render its URL or number of likes by default.
-
 import React from "react"
 import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
@@ -13,10 +11,15 @@ const newBlog = {
   url: "blabla.com",
 }
 
+let container
+const handleLikeTest = jest.fn()
+
+beforeEach(() => {
+  container = render(<Blog blog={newBlog} updateBlog={handleLikeTest} />).container
+})
+
 describe("renders ", () => {
   test("blog post with title and author only", () => {
-    render(<Blog blog={newBlog} />)
-
     const titleAndAuthor = screen.getByText("Oi - Doki")
     const url = screen.queryByText("url")
     const likes = screen.queryByText("likes")
@@ -28,8 +31,6 @@ describe("renders ", () => {
   })
 
   test("URL and number of likes after the view button has been clicked ", async () => {
-    const { container } = render(<Blog blog={newBlog} />)
-
     const button = screen.getByText("view")
     await userEvent.click(button)
 
@@ -37,5 +38,19 @@ describe("renders ", () => {
 
     expect(div).toHaveTextContent("blabla.com")
     expect(div).toHaveTextContent("5")
+  })
+})
+
+describe("when clicked, ", () => {
+  test("the event handler for the like button is called twice", async () => {
+    const button = screen.getByText("view")
+    await userEvent.click(button)
+
+    const likeButton = screen.getByText("like")
+
+    await userEvent.click(likeButton)
+    await userEvent.click(likeButton)
+
+    expect(handleLikeTest).toHaveBeenCalledTimes(2)
   })
 })
