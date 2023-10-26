@@ -13,17 +13,12 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
-  const [isAdded, setIsAdded] = useState(null)
-  const [notAdded, setNotAdded] = useState(null)
-  const [notLogged, setNotlogged] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState({})
   const [display,setDisplay] = useState(false)
 
 
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState("")
+ 
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
@@ -42,12 +37,11 @@ const App = () => {
     }
   }, [])
 
-  function hideStatusMessage() {
-    setIsAdded(null)
-    setNotAdded(null)
-    setNotlogged(null)
-  }
-
+  useEffect(() => {
+     setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+  }, [notificationMessage]);
 
 
   const handleLogin = async (event) => {
@@ -66,41 +60,20 @@ const App = () => {
       setUsername("")
       setPassword("")
     } catch (err) {
-      setErrorMessage("Wrong credentials")
-      setNotlogged(true)
-      setTimeout(() => {
-        setErrorMessage(null)
-        hideStatusMessage()
-      }, 5000)
+      setNotificationMessage({message:"Wrong username or password", status:false})
     }
   }
 
-  const handleNewBlog = (e) => {
-    e.preventDefault()
+  const handleNewBlog = (newBlog) => {
 
-    const newBlog = {
-      title,
-      author,
-      url
-    }
     blogService.create(newBlog).then(
       (res) => {
         setBlogs(blogs.concat(res))
-        setIsAdded(true)
+        setNotificationMessage({message:`A new blog ${newBlog.title} by ${newBlog.author} added`, status:true})
         setDisplay(false)
-        setTimeout(() => {
-          setAuthor("")
-          setTitle("")
-          setUrl("")
-          hideStatusMessage()
-        }, 3500)
-
       }
     ).catch(err => {
-      setNotAdded(true)
-      setTimeout(() => {
-        hideStatusMessage()
-      },5000)
+      setNotificationMessage({message:"Blog was not added", status:false})
     }
     )
   }
@@ -122,16 +95,12 @@ const App = () => {
     }
   }
 
-
-
   return (
     <div>
-      {!user &&
+      <Notification notificationMessage = {notificationMessage}></Notification>
+      {!user ? (
       <div>
         <h2>log in to application</h2>
-        { notLogged &&
-           <Notification notLogged = {notLogged}></Notification>
-        }
         <Login
           handleLogin={handleLogin}
           password={password}
@@ -140,14 +109,9 @@ const App = () => {
           setUsername={setUsername}>
         </Login>
       </div>
-      }
-
-      {user &&
+      ) :
        <div>
          <h2>blogs</h2>
-         { (isAdded || notAdded) &&
-           <Notification isAdded={isAdded} notAdded={notAdded} title={title} author={author}></Notification>
-         }
          <p style={{ display:"inline" }}> {user.name} logged in</p>
          <LogoutButton
            onClick={() => window.localStorage.clear()}
@@ -158,13 +122,7 @@ const App = () => {
            display={display}
            setDisplay={setDisplay}>
            <NewBlogForm
-             handleNewBlog={handleNewBlog}
-             title={title}
-             setTitle={setTitle}
-             author={author}
-             setAuthor={setAuthor}
-             url={url}
-             setUrl={setUrl}>
+             handleNewBlog={handleNewBlog}>
            </NewBlogForm>
          </Togglable>
          <div style={{ paddingTop:"5em" }}>
