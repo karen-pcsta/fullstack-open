@@ -7,7 +7,7 @@ const Togglable = ({ children, display, setDisplay }) => {
   }
 
   if(!display){
-    return <button onClick={toggle}>New Post</button>
+    return <button id="newPostButton" onClick={toggle}>New Post</button>
   } else {
     return (
       <div>

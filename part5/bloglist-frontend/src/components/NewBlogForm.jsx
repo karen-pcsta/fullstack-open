@@ -50,7 +50,7 @@ return (
         id='url-input'
       />
     </div>
-    <button type='submit'>Create</button>
+    <button id="submitBtn" type='submit'>Create</button>
   </form>
 
 )}
