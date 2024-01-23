@@ -7,7 +7,7 @@ const loginForm = ({
   username,
   setUsername
 }) => (
-  <form onSubmit={handleLogin}>
+  <form id="loginForm" onSubmit={handleLogin}>
     <div>
           username:
       <input
