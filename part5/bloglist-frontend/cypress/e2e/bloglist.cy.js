@@ -47,5 +47,13 @@ describe("Blog app", function () {
       cy.get("button").contains("view").click()
       cy.get("button").contains("remove").click()
     })
+    it("Only the creator can see the delete button of a blog", function () {
+      const token = JSON.parse(localStorage.getItem("loggedInUser"))
+      cy.addBlogPost()
+      if (token) {
+        cy.get("button").contains("view").click()
+        cy.get("button").contains("remove")
+      }
+    })
   })
 })
