@@ -43,3 +43,11 @@ Cypress.Commands.add("typeUserCredentials", () => {
   cy.get("#passwordField").type("12345")
   cy.get("button").click()
 })
+
+Cypress.Commands.add("addBlogPost", () => {
+  cy.get("#newPostButton").click()
+  cy.get("#title-input").type("A Feast for Crows")
+  cy.get("#author-input").type("George R.R Martin")
+  cy.get("#url-input").type("https://www.hbo.com/game-of-thrones")
+  cy.get("#submitBtn").click()
+})

@@ -48,7 +48,9 @@ const Blog = ({ blogId,blog, blogList, updateBlog, setBlogs}) => {
       {show && <div className="togglableContent">
         {url}
         <br></br>
+        <span id="likesSpan">
         {likes} <button style={{ display:"inline" }} onClick={handleLikes}>like</button>
+        </span>
         <br></br>
         <button style={{ display:"inline" }} onClick={handleRemoval}>remove</button>
       </div>}
