@@ -55,5 +55,14 @@ describe("Blog app", function () {
         cy.get("button").contains("remove")
       }
     })
+    it.only("Blogs are ordered according to number of likes in descending order", function () {
+      cy.addBlogPost()
+      cy.addAdditionalBlogPost()
+      cy.get(".blog-post").eq(1).contains("view").click()
+      cy.clickAndWait()
+      cy.visit("http://localhost:5173")
+      cy.get(".blog-post").eq(0).contains("view").click()
+      cy.get(".blog-post").eq(0).contains("2")
+    })
   })
 })

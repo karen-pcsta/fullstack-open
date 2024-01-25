@@ -51,3 +51,18 @@ Cypress.Commands.add("addBlogPost", () => {
   cy.get("#url-input").type("https://www.hbo.com/game-of-thrones")
   cy.get("#submitBtn").click()
 })
+
+Cypress.Commands.add("addAdditionalBlogPost", () => {
+  cy.get("#newPostButton").click()
+  cy.get("#title-input").type("A Dance with Dragons")
+  cy.get("#author-input").type("George R.R Martin")
+  cy.get("#url-input").type("https://www.hbo.com/game-of-thrones")
+  cy.get("#submitBtn").click()
+})
+
+Cypress.Commands.add("clickAndWait", () => {
+  cy.get(".blog-post").eq(1).contains("like").click()
+  cy.wait(500)
+  cy.get(".blog-post").eq(1).contains("like").click()
+  cy.wait(500)
+})
