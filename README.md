@@ -1,38 +1,86 @@
-# [Fullstack open 2023](https://fullstackopen.com/en/#course-contents)
+# [Fullstack open course](https://fullstackopen.com/en/#course-contents)
 
-Exercises repository for Fullstack Open's Deep Dive Into Modern Web Development course.
+This repository contains the solutions for the exercises from the Fullstack Open course, focusing on modern web development with React, Node.js, and REST APIs. The course covers building full-stack applications using React for the frontend and Node.js for the backend.
 
-According to fullstack open's website :
-"The main focus is on building single page applications with ReactJS that use REST APIs built with Node.js. The course also contains a section on GraphQL, a modern alternative to REST APIs."
+## Course Contents
 
-## [Part0](https://fullstackopen.com/en/part0/fundamentals_of_web_apps)
+### Part 0: Fundamentals of Web Apps
+- Overview of web app fundamentals and interaction between browser and server.
 
-- Fundamentals of Web Apps.
+### Part 1: Introduction to React
+- Basics of React, components, JSX, and props.
 
-## Part1
+### Part 2: Communicating with Server
+- Working with forms, event handlers, and communicating with a server via HTTP.
 
-- Introduction to React.
+### Part 3: Programming a Server with Node.js and Express
+- Setting up a Node.js server using Express and connecting to MongoDB.
 
-## Part2
+### Part 4: Testing Express Servers and User Management
+- Writing tests for backend services and handling user authentication.
 
-- Communicating with server.
+### Part 5: Testing React Apps
+- Testing React components using **Jest** and the React Testing Library.
+- **End-to-end (E2E) testing** using **Cypress** to simulate user interactions.
 
-## Part3
+### Part 6: Advanced State Management
+- State management with Redux, reducers, and Redux Toolkit.
 
-- Programming a server with NodeJS and Express.
+### Part 7: React Router, Custom Hooks, and Styling
+- Client-side routing with React Router, creating custom hooks, and using libraries for styling.
 
-## Part4
+## Getting Started
 
-- Testing Express servers, user administration.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (version 14 or later)
+- [npm](https://www.npmjs.com/) (Node package manager)
 
-## Part5
+### Installation
 
-- Testing React apps.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/karen-pcsta/fullstack-open.git
+   ```
 
-## Part6
+   Navigate to the project directory:
 
-- Advanced state management.
+```bash
+cd fullstack-open
+```
 
-## Part7
+2. **Install the dependencies:**
+```bash
+npm install
+```
 
-- React router, custom hooks, styling app with CSS and webpack.
+3. **Start the development server:**
+```bash
+npm start
+```
+
+4. **Running Cypress Tests:** 
+
+4.1.**Install Cypress:**
+
+```bash
+npm install cypress --save-dev
+```
+Add an npm-script to run it:
+```bash
+{
+  // ...
+  "scripts": {
+    "cypress:open": "cypress open"
+  },
+  // ...
+}
+```
+
+4.2. **Run the Cypress test runner:**
+
+```bash
+npm run cypress:open
+```
+
+Run the tests from the Cypress dashboard.
+
