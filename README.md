@@ -26,8 +26,6 @@ This repository contains the solutions for the exercises from the Fullstack Open
 ### Part 6: Advanced State Management
 - State management with Redux, reducers, and Redux Toolkit.
 
-### Part 7: React Router, Custom Hooks, and Styling
-- Client-side routing with React Router, creating custom hooks, and using libraries for styling.
 
 ## Getting Started
 
